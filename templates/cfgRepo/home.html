@@ -1,0 +1,12 @@
+{% include "nav.html" %}
+{% load staticfiles %}
+
+{% if dir_list %}
+    <ul>
+    {% for dir in dir_list %}
+        <li><a href="dir/{{ dir.id }}/">{{ dir.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No subdirs are available.</p>
+{% endif %}

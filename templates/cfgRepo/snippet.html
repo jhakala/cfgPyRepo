@@ -1,0 +1,8 @@
+{% include "nav.html" %}
+<h1>{{ snippet }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<p>Version: {{ snippet.version }}</p>
+<p>Creation date: {{ snippet.date }}</p>
+<p>tags: {{ snippet.tag }}</p>
+<div class="cfgField" style="border: 1px solid lightgray"><tt>{{ snippet.content }}</tt></div>

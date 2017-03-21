@@ -7,7 +7,7 @@ from django.db import models
 from django.utils import timezone
 
 class Directory(models.Model):
-  name = models.SlugField()
+  name = models.SlugField(unique = True)
   parentDir = models.ForeignKey("Directory", on_delete=models.CASCADE, null=True)
   def __str__(self):
     #if self.parentDir is not None:
@@ -17,7 +17,7 @@ class Directory(models.Model):
 
 class SnippetHistory(models.Model):
   parentDir = models.ForeignKey(Directory, on_delete=models.CASCADE)
-  snippetName = models.CharField(max_length=255)
+  snippetName = models.CharField(max_length=255, unique = True)
   def __str__(self):
      return self.snippetName 
 
@@ -35,7 +35,7 @@ class Snippet(models.Model):
   version = models.PositiveSmallIntegerField()
 
   # tag
-  tag = models.SlugField(null=True)
+  tag = models.SlugField(null=True, blank=True)
   
   # the text of the snippet
   content = models.TextField(null=True)
