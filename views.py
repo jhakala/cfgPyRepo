@@ -56,9 +56,9 @@ class UpdateSnippetView(generic.CreateView):
   def form_valid(self, form):
     newSnippet = form.save(commit=False)
     newSnippet.date=timezone.now()
-
-    print Snippet.objects.all().aggregate(Max('version'))
-    latestVersion = Snippet.objects.filter(snippetHistory = newSnippet.snippetHistory).aggregate(Max('version'))['version__max']
+    otherVersions = Snippet.objects.filter(snippetHistory = newSnippet.snippetHistory)
+    latestVersion = otherVersions.aggregate(Max('version'))['version__max']
+    otherVersions.filter(tag = newSnippet.tag).update(tag = "")
     if latestVersion is None:
       latestVersion = 0
     newSnippet.version=latestVersion+1
