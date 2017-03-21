@@ -1,4 +1,5 @@
 import os
+import shutil
 from .models import Snippet, SnippetHistory, Directory
 
 # Functions for recreating the CfgCVS directory structure
@@ -8,7 +9,7 @@ from .models import Snippet, SnippetHistory, Directory
 def mapVersions(history):
   versionArray = []
   for snippet in Snippet.objects.filter(snippetHistory = history):
-    versionArray.append((int(snippet.version), str(snippet.content)))
+    versionArray.append((int(snippet.version), str(snippet.content), str(snippet.tag)))
   return versionArray
   
 # gets all the stuff mapped to one of the database Directory objects
@@ -28,14 +29,17 @@ def parseMapToFS(snipMap, prefix, fsList):
       parseMapToFS(snipMap[key], os.path.join(prefix, key), fsList)
     elif type(snipMap[key]) is list:
       fsList.append(("dir", os.path.join(prefix, key)))
-      for iVersion in snipMap[key]:
-        fsList.append(("file", (os.path.join(prefix, os.path.join(key, str(iVersion[0]))), str(iVersion[1]))))
+      for (version, content, tag) in snipMap[key]:
+        versionPath = os.path.join(prefix, os.path.join(key, str(version)))
+        fsList.append(("file", (versionPath, str(content))))
+        if len(str(tag)) > 0:
+          fsList.append(("link", (os.path.join(prefix, os.path.join(key, str(tag))), versionPath)))
   
 # Builds the cfgCVS-type directory structure
 def mapSnippets():
   rootDir = Directory.objects.filter(parentDir = None).first()
   if os.path.exists(str(rootDir.name)):
-    os.removedirs(str(rootDir.name))
+    shutil.rmtree(str(rootDir.name))
   os.mkdir(str(rootDir.name))
   masterMap = mapChildren(rootDir)
   fsList = []
@@ -44,14 +48,11 @@ def mapSnippets():
   for (kind, data) in fsList:
     if kind == "dir":
       os.mkdir(data)
-    elif kind == "file":
-      (path, content) = data
-      with open(path, "w") as cacheFile:
-        cacheFile.write(content)
-  
-    
-    
-  
-  
-  
-  
+    else:
+      if kind == "file":
+        (path, content) = data
+        with open(path, "w") as cacheFile:
+          cacheFile.write(content)
+      elif kind == "link":
+        (path, version) = data
+        os.symlink(version, path)
