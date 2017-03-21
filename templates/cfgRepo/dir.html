@@ -1,0 +1,16 @@
+
+{% load staticfiles %}
+{% if dir_list %}
+    <ul>
+    {% for dir in dir_list.subdirs %}
+        <li><a href="/cfgRepo/dir/{{ dir.id }}/">{{ dir.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <ul>
+    {% for snippetHistory in dir_list.snippetHistories %}
+        <li><a href="/cfgRepo/snippetHistory/{{ snippetHistory.id }}/">{{ snippetHistory.snippetName }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No snippets or subdirs are available.</p>
+{% endif %}

@@ -1,0 +1,13 @@
+{% load staticfiles %}
+<h1>{{ snippetHistory }}</h1>
+{% if version_list %}
+    <ul>
+    {% for version in version_list %}
+        <li><a href="/cfgRepo/snippet/{{ version.id }}/">{{ version.version }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No versions are available.</p>
+{% endif %}
+
+

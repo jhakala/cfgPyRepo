@@ -17,9 +17,9 @@ class Directory(models.Model):
 
 class SnippetHistory(models.Model):
   parentDir = models.ForeignKey(Directory, on_delete=models.CASCADE)
-  name = models.CharField(max_length=255)
+  snippetName = models.CharField(max_length=255)
   def __str__(self):
-     return self.name 
+     return self.snippetName 
 
 
 # a model for an HCAL Cfg snippet
@@ -35,12 +35,11 @@ class Snippet(models.Model):
   version = models.PositiveSmallIntegerField()
 
   # tag
-  tag = models.SlugField()
+  tag = models.SlugField(null=True)
   
   # the text of the snippet
-  content = models.TextField()
+  content = models.TextField(null=True)
   
-
   def __str__(self):
-    return self.content
+    return "%s: version %i" % (self.snippetHistory, self.version)
     
