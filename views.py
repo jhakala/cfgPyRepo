@@ -8,7 +8,10 @@ from itertools import chain
 
 from .models import Snippet, SnippetHistory, Directory
 
-# Create your views here.
+# Views for making a web interface to view and edit the snippets
+# John Hakala, 3/21/2017
+
+# This is minimalistic as of right now -- it just provides a link to the root dir
 class IndexView(generic.ListView):
     template_name = 'cfgRepo/home.html'
     context_object_name = 'dir_list'
@@ -17,6 +20,7 @@ class IndexView(generic.ListView):
         """List of dirs"""
         return Directory.objects.filter(parentDir = None)
 
+# Lists all snippet histories within a directory
 class DirectoryView(generic.ListView):
   model = Directory
   template_name = "cfgRepo/dir.html"
@@ -29,10 +33,12 @@ class DirectoryView(generic.ListView):
     
     return children
 
+# Shows info about a snippet
 class SnippetView(generic.DetailView):
   model = Snippet
   template_name = "cfgRepo/snippet.html"
 
+# Shows a list of the snippet's versions
 class SnippetHistoryView(generic.ListView):
   model = SnippetHistory
   template_name = "cfgRepo/snippetHistory.html"
@@ -42,6 +48,7 @@ class SnippetHistoryView(generic.ListView):
       """List of versions"""
       return Snippet.objects.filter(snippetHistory = self.kwargs['pk']).order_by('-version')
 
+# Interface for making a new version of a snippet
 class UpdateSnippetView(generic.CreateView):
   model = Snippet
   template_name = "cfgRepo/updateSnippet.html"
@@ -58,6 +65,7 @@ class UpdateSnippetView(generic.CreateView):
     newSnippet.save()
     return HttpResponseRedirect("snippet/%i" % newSnippet.id)
 
+# Interface for making a new snippet to track in the repo
 class CreateSnippetHistoryView(generic.CreateView):
   model = SnippetHistory
   fields = ['snippetName', 'parentDir']
@@ -67,6 +75,7 @@ class CreateSnippetHistoryView(generic.CreateView):
     newSnippetHistory.save()
     return HttpResponseRedirect("snippetHistory/%i" % newSnippetHistory.id)
 
+# Interface for creating a new directory
 class CreateDirectoryView(generic.CreateView):
   model = Directory
   fields = ['name', 'parentDir']
