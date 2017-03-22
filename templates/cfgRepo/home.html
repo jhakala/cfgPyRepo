@@ -1,5 +1,7 @@
-{% include "nav.html" %}
+{% load static %}
 {% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'cfgRepo/cfgRepo.css' %}" />
+{% include "nav.html" %}
 
 {% if dir_list %}
     <ul>

@@ -14,10 +14,8 @@ class Directory(models.Model):
   name = models.SlugField(unique = True)
   parentDir = models.ForeignKey("Directory", on_delete=models.CASCADE, null=True)
   def __str__(self):
-    #if self.parentDir is not None:
-    #  return os.path.join(self.parentDir, self.name) 
-    #else:
       return self.name 
+      
 
 # This is the container for all the versions of a snippet.
 class SnippetHistory(models.Model):

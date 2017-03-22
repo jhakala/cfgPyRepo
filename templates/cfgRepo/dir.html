@@ -1,16 +1,22 @@
-{% include "nav.html" %}
+{% load static %}
 {% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'cfgRepo/cfgRepo.css' %}" />
+{% include "nav.html" %}
 {% if dir_list %}
+    <h1>{{ dir_list.thisDir }}</h1>
+    <h2>Subdirectories</h2>
     <ul>
-    {% for dir in dir_list.subdirs %}
-        <li><a href="/cfgRepo/dir/{{ dir.id }}/">{{ dir.name }}</a></li>
+    {% for subdir in dir_list.subdirs %}
+        <li><a href="/cfgRepo/dir/{{ subdir.id }}/">{{ subdir.name }}</a></li>
     {% endfor %}
     </ul>
+    <h2>Snippets:</h2>
     <ul>
     {% for snippetHistory in dir_list.snippetHistories %}
         <li><a href="/cfgRepo/snippetHistory/{{ snippetHistory.id }}/">{{ snippetHistory.snippetName }}</a></li>
     {% endfor %}
     </ul>
+    <h3><a href="/cfgRepo/createSnippetHistory">Create a snippet in this directory</a></h3>
 {% else %}
     <p>No snippets or subdirs are available.</p>
 {% endif %}

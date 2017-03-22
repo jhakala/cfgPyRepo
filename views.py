@@ -8,6 +8,8 @@ from itertools import chain
 
 from .models import Snippet, SnippetHistory, Directory
 
+from cfgFileSystem import mapSnippets
+
 # Views for making a web interface to view and edit the snippets
 # John Hakala, 3/21/2017
 
@@ -26,12 +28,24 @@ class DirectoryView(generic.ListView):
   template_name = "cfgRepo/dir.html"
   context_object_name = 'dir_list'
   
+  def fullPath(self):
+    fullPath = []
+    ancestor = Directory.objects.filter(id = self.kwargs['pk']).first()
+    while  ancestor is not None:
+      fullPath.append(ancestor.name);
+      ancestor = Directory.objects.filter(name = ancestor.parentDir).first()
+    fullPath.reverse()
+    print fullPath
+    return "/".join(fullPath)
+
   def get_queryset(self):
     """List of children dirs"""
-    return {"subdirs"          : Directory.objects.filter(parentDir = self.kwargs['pk']),
+    return {"thisDir"          : self.fullPath(),
+            "subdirs"          : Directory.objects.filter(parentDir = self.kwargs['pk']),
             "snippetHistories" : SnippetHistory.objects.filter(parentDir = self.kwargs['pk']) }
     
     return children
+
 
 # Shows info about a snippet
 class SnippetView(generic.DetailView):
@@ -53,6 +67,16 @@ class UpdateSnippetView(generic.CreateView):
   model = Snippet
   template_name = "cfgRepo/updateSnippet.html"
   fields = ['snippetHistory', 'tag', 'content']
+
+  def get_initial(self):
+    referer = self.request.META.get('HTTP_REFERER').split("/")
+    snippetHistory=""
+    if "snippetHistory" in referer:
+      snippetHistoryID = referer[referer.index("snippetHistory") + 1]
+      print snippetHistoryID
+      snippetHistory = get_object_or_404(SnippetHistory, id=snippetHistoryID)  
+    return {"snippetHistory" : snippetHistory}
+
   def form_valid(self, form):
     newSnippet = form.save(commit=False)
     newSnippet.date=timezone.now()
@@ -63,6 +87,7 @@ class UpdateSnippetView(generic.CreateView):
       latestVersion = 0
     newSnippet.version=latestVersion+1
     newSnippet.save()
+    mapSnippets()
     return HttpResponseRedirect("snippet/%i" % newSnippet.id)
 
 # Interface for making a new snippet to track in the repo
@@ -70,6 +95,16 @@ class CreateSnippetHistoryView(generic.CreateView):
   model = SnippetHistory
   fields = ['snippetName', 'parentDir']
   template_name = "cfgRepo/createSnippetHistory.html"
+
+  def get_initial(self):
+    referer = self.request.META.get('HTTP_REFERER').split("/")
+    parentDir = ""
+    if "dir" in referer:
+      dirID = referer[referer.index("dir") + 1]
+      print dirID
+      parentDir = get_object_or_404(Directory, id=dirID)  
+    return {"parentDir" : parentDir}
+
   def form_valid(self, form):
     newSnippetHistory = form.save(commit=False)
     newSnippetHistory.save()

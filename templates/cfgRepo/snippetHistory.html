@@ -1,12 +1,16 @@
-{% include "nav.html" %}
+{% load static %}
 {% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'cfgRepo/cfgRepo.css' %}" />
+{% include "nav.html" %}
 <h1>{{ snippetHistory }}</h1>
 {% if version_list %}
+    <h2>Versions</h2>
     <ul>
     {% for version in version_list %}
         <li><a href="/cfgRepo/snippet/{{ version.id }}/">{{ version.version }}</a></li>
     {% endfor %}
     </ul>
+    <h2><a href="/cfgRepo/updateSnippet">Modify this snippet</a></h2>
 {% else %}
     <p>No versions are available.</p>
 {% endif %}
