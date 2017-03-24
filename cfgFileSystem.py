@@ -38,22 +38,26 @@ def parseMapToFS(snipMap, prefix, fsList):
 # Builds the cfgCVS-type directory structure
 def mapSnippets():
   rootDir = Directory.objects.filter(parentDir = None).first()
-  if os.path.exists(str(rootDir.name)):
-    shutil.rmtree(str(rootDir.name))
-  os.mkdir(str(rootDir.name))
+  #if os.path.exists(str(rootDir.name)):
+  #  shutil.rmtree(str(rootDir.name))
+  if not os.path.exists(str(rootDir.name)):
+    os.mkdir(str(rootDir.name))
   masterMap = mapChildren(rootDir)
   fsList = []
   parseMapToFS(masterMap, str(rootDir), fsList)
-  print fsList
   pathToDir = os.getcwd()
   for (kind, data) in fsList:
     if kind == "dir":
-      os.mkdir(data)
+      if not os.path.exists(data):
+        os.mkdir(data)
     else:
       if kind == "file":
         (path, content) = data
-        with open(path, "w") as cacheFile:
-          cacheFile.write(content)
+        if not os.path.exists(path):
+          with open(path, "w") as cacheFile:
+            cacheFile.write(content)
       elif kind == "link":
         (path, version) = data
+        if os.path.exists(path):
+          os.unlink(path)
         os.symlink(os.path.join(pathToDir, version), path)
