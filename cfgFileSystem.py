@@ -45,6 +45,7 @@ def mapSnippets():
   fsList = []
   parseMapToFS(masterMap, str(rootDir), fsList)
   print fsList
+  pathToDir = os.getcwd()
   for (kind, data) in fsList:
     if kind == "dir":
       os.mkdir(data)
@@ -55,4 +56,4 @@ def mapSnippets():
           cacheFile.write(content)
       elif kind == "link":
         (path, version) = data
-        os.symlink(version, path)
+        os.symlink(os.path.join(pathToDir, version), path)

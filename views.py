@@ -115,6 +115,15 @@ class CreateDirectoryView(generic.CreateView):
   model = Directory
   fields = ['name', 'parentDir']
   template_name = "cfgRepo/createDir.html"
+
+  def get_initial(self):
+    referer = self.request.META.get('HTTP_REFERER').split("/")
+    parentDir = ""
+    if "dir" in referer:
+      dirID = referer[referer.index("dir") + 1]
+      parentDir = get_object_or_404(Directory, id=dirID)  
+    return {"parentDir" : parentDir}
+
   def form_valid(self, form):
     newDir = form.save(commit=False)
     newDir.save()
