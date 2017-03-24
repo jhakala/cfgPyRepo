@@ -13,6 +13,15 @@ from cfgFileSystem import mapSnippets
 # Views for making a web interface to view and edit the snippets
 # John Hakala, 3/21/2017
 
+# Helper method for channeling the user to the correct destination
+def getRefererID(referer, tag):
+  refererID = ""
+  if referer is not None:
+    url = referer.split("/")
+    if tag in url:
+      refererID = url[url.index(tag) + 1]
+  return refererID
+
 # This is minimalistic as of right now -- it just provides a link to the root dir
 class IndexView(generic.ListView):
     template_name = 'cfgRepo/home.html'
@@ -69,13 +78,9 @@ class UpdateSnippetView(generic.CreateView):
   fields = ['snippetHistory', 'tag', 'content']
 
   def get_initial(self):
-    referer = self.request.META.get('HTTP_REFERER').split("/")
-    snippetHistory=""
-    if "snippetHistory" in referer:
-      snippetHistoryID = referer[referer.index("snippetHistory") + 1]
-      print snippetHistoryID
-      snippetHistory = get_object_or_404(SnippetHistory, id=snippetHistoryID)  
-    return {"snippetHistory" : snippetHistory}
+    snippetHistoryID = getRefererID(self.request.META.get('HTTP_REFERER'), "snippetHistory")
+    if snippetHistoryID:
+      return {"snippetHistory" : get_object_or_404(SnippetHistory, id=snippetHistoryID)}
 
   def form_valid(self, form):
     newSnippet = form.save(commit=False)
@@ -97,13 +102,9 @@ class CreateSnippetHistoryView(generic.CreateView):
   template_name = "cfgRepo/createSnippetHistory.html"
 
   def get_initial(self):
-    referer = self.request.META.get('HTTP_REFERER').split("/")
-    parentDir = ""
-    if "dir" in referer:
-      dirID = referer[referer.index("dir") + 1]
-      print dirID
-      parentDir = get_object_or_404(Directory, id=dirID)  
-    return {"parentDir" : parentDir}
+    dirID =  getRefererID(self.request.META.get('HTTP_REFERER'), "dir")
+    if dirID:
+      return {"parentDir" : get_object_or_404(Directory, id=dirID)}
 
   def form_valid(self, form):
     newSnippetHistory = form.save(commit=False)
@@ -117,12 +118,9 @@ class CreateDirectoryView(generic.CreateView):
   template_name = "cfgRepo/createDir.html"
 
   def get_initial(self):
-    referer = self.request.META.get('HTTP_REFERER').split("/")
-    parentDir = ""
-    if "dir" in referer:
-      dirID = referer[referer.index("dir") + 1]
-      parentDir = get_object_or_404(Directory, id=dirID)  
-    return {"parentDir" : parentDir}
+    dirID =  getRefererID(self.request.META.get('HTTP_REFERER'), "dir")
+    if dirID:
+      return {"parentDir" : get_object_or_404(Directory, id=dirID)}
 
   def form_valid(self, form):
     newDir = form.save(commit=False)
