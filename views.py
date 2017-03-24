@@ -28,7 +28,6 @@ class IndexView(generic.ListView):
     context_object_name = 'dir_list'
 
     def get_queryset(self):
-        """List of dirs"""
         return Directory.objects.filter(parentDir = None)
 
 # Lists all snippet histories within a directory
@@ -48,13 +47,9 @@ class DirectoryView(generic.ListView):
     return "/".join(fullPath)
 
   def get_queryset(self):
-    """List of children dirs"""
     return {"thisDir"          : self.fullPath(),
             "subdirs"          : Directory.objects.filter(parentDir = self.kwargs['pk']),
             "snippetHistories" : SnippetHistory.objects.filter(parentDir = self.kwargs['pk']) }
-    
-    return children
-
 
 # Shows info about a snippet
 class SnippetView(generic.DetailView):
@@ -68,7 +63,6 @@ class SnippetHistoryView(generic.ListView):
   context_object_name = 'version_list'
 
   def get_queryset(self):
-      """List of versions"""
       return Snippet.objects.filter(snippetHistory = self.kwargs['pk']).order_by('-version')
 
 # Interface for making a new version of a snippet
@@ -102,7 +96,7 @@ class CreateSnippetHistoryView(generic.CreateView):
   template_name = "cfgRepo/createSnippetHistory.html"
 
   def get_initial(self):
-    dirID =  getRefererID(self.request.META.get('HTTP_REFERER'), "dir")
+    eirID =  getRefererID(self.request.META.get('HTTP_REFERER'), "dir")
     if dirID:
       return {"parentDir" : get_object_or_404(Directory, id=dirID)}
 
@@ -126,4 +120,3 @@ class CreateDirectoryView(generic.CreateView):
     newDir = form.save(commit=False)
     newDir.save()
     return HttpResponseRedirect("dir/%s" % newDir.id)
-    
