@@ -96,7 +96,7 @@ class CreateSnippetHistoryView(generic.CreateView):
   template_name = "cfgRepo/createSnippetHistory.html"
 
   def get_initial(self):
-    eirID =  getRefererID(self.request.META.get('HTTP_REFERER'), "dir")
+    dirID =  getRefererID(self.request.META.get('HTTP_REFERER'), "dir")
     if dirID:
       return {"parentDir" : get_object_or_404(Directory, id=dirID)}
 
