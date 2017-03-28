@@ -1,7 +1,5 @@
-{% load static %}
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'cfgRepo/cfgRepo.css' %}" />
-{% include "nav.html" %}
+{% extends "cfgRepo/base.html" %}
+{% block content %}
 <h1>{{ snippet }}</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -9,3 +7,4 @@
 <p>Creation date: {{ snippet.date }}</p>
 <p>tags: {{ snippet.tag }}</p>
 <div class="cfgField" style="border: 1px solid lightgray"><tt><pre>{{ snippet.content }}</pre></tt></div>
+{% endblock %}

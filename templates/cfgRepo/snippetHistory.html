@@ -1,7 +1,5 @@
-{% load static %}
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'cfgRepo/cfgRepo.css' %}" />
-{% include "nav.html" %}
+{% extends "cfgRepo/base.html" %}
+{% block content %}
 <h1>{{ snippetHistory }}</h1>
 {% if version_list %}
     <h2>Versions</h2>
@@ -15,5 +13,4 @@
     <p>No versions are available.</p>
     <h2><a href="/cfgRepo/updateSnippet">Create the first version of this snippet</a></h2>
 {% endif %}
-
-
+{% endblock %}

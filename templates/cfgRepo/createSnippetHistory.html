@@ -1,7 +1,5 @@
-{% load static %}
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'cfgRepo/cfgRepo.css' %}" />
-{% include "nav.html" %}
+{% extends "cfgRepo/base.html" %}
+{% block content %}
 <h1> Create new snippet</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p> {% endif %}
@@ -10,3 +8,4 @@
   {{ form.as_p }}
   <input type="submit" value="CreateSnippetHistory">
 </form>
+{% endblock %}

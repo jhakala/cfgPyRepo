@@ -1,7 +1,5 @@
-{% load static %}
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'cfgRepo/cfgRepo.css' %}" />
-{% include "nav.html" %}
+{% extends "cfgRepo/base.html" %}
+{% block content %}
 {% if dir_list %}
     <h1>{{ dir_list.thisDir }}</h1>
     <h2>Subdirectories</h2>
@@ -23,3 +21,4 @@
     <h3><a href="/cfgRepo/createSnippetHistory">Create a snippet in this directory</a></h3>
     <h3><a href="/cfgRepo/createDir">Create a subdirectory in this directory</a></h3>
 {% endif %}
+{% endblock %}
